@@ -103,7 +103,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-# data/
+data/
 # data
 .vscode
 .idea
@@ -116,6 +116,7 @@ venv.bak/
 docs/modelzoo_statistics.md
 mmdet/.mim
 work_dirs
+potato_dataset
 
 # Pytorch
 *.pth

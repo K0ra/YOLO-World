@@ -106,6 +106,7 @@ def main():
     # build the runner from config
     if 'runner_type' not in cfg:
         # build the default runner
+        # cfg.train_cfg = dict(max_iters=1)
         runner = Runner.from_cfg(cfg)
     else:
         # build customized runner from the registry

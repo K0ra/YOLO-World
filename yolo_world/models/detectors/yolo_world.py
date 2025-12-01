@@ -28,8 +28,11 @@ class YOLOWorldDetector(YOLODetector):
         self.bbox_head.num_classes = self.num_train_classes
         img_feats, txt_feats, txt_masks = self.extract_feat(
             batch_inputs, batch_data_samples)
-        losses = self.bbox_head.loss(img_feats, txt_feats, txt_masks,
-                                     batch_data_samples)
+        losses = self.bbox_head.loss(
+            img_feats=img_feats, 
+            txt_feats=txt_feats, 
+            txt_masks=txt_masks,
+            batch_data_samples=batch_data_samples)
         return losses
 
     def predict(self,
@@ -45,11 +48,12 @@ class YOLOWorldDetector(YOLODetector):
 
         # self.bbox_head.num_classes = self.num_test_classes
         self.bbox_head.num_classes = txt_feats[0].shape[0]
-        results_list = self.bbox_head.predict(img_feats,
-                                              txt_feats,
-                                              txt_masks,
-                                              batch_data_samples,
-                                              rescale=rescale)
+        results_list = self.bbox_head.predict(
+            img_feats=img_feats,
+            txt_feats=txt_feats,
+            txt_masks=txt_masks,
+            batch_data_samples=batch_data_samples,
+            rescale=rescale)
 
         batch_data_samples = self.add_pred_to_datasample(
             batch_data_samples, results_list)
@@ -58,7 +62,7 @@ class YOLOWorldDetector(YOLODetector):
     def reparameterize(self, texts: List[List[str]]) -> None:
         # encode text embeddings into the detector
         self.texts = texts
-        self.text_feats, None = self.backbone.forward_text(texts)
+        self.text_feats = self.backbone.forward_text(texts)
 
     def _forward(
             self,
@@ -163,8 +167,11 @@ class SimpleYOLOWorldDetector(YOLODetector):
         if self.reparameterized:
             losses = self.bbox_head.loss(img_feats, batch_data_samples)
         else:
-            losses = self.bbox_head.loss(img_feats, txt_feats,
-                                         batch_data_samples)
+            losses = self.bbox_head.loss(
+                img_feats,
+                txt_feats,
+                txt_masks=None,
+                batch_data_samples=batch_data_samples)
         return losses
 
     def predict(self,
@@ -184,10 +191,12 @@ class SimpleYOLOWorldDetector(YOLODetector):
                                                   batch_data_samples,
                                                   rescale=rescale)
         else:
-            results_list = self.bbox_head.predict(img_feats,
-                                                  txt_feats,
-                                                  batch_data_samples,
-                                                  rescale=rescale)
+            results_list = self.bbox_head.predict(
+                img_feats=img_feats,
+                txt_feats=txt_feats,
+                txt_masks=None,
+                batch_data_samples=batch_data_samples,
+                rescale=rescale)
 
         batch_data_samples = self.add_pred_to_datasample(
             batch_data_samples, results_list)
